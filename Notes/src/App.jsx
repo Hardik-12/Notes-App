@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react-hooks/rules-of-hooks */
 import React from "react"
 import Sidebar from "./components/Sidebar"
@@ -7,15 +8,13 @@ import {nanoid} from "nanoid"
 import './App.css'
 
 export default function App() {
-    const [notes, setNotes] = React.useState(
-        JSON.parse(localStorage.getItem('Notes'))
-         || []
+    const [notes, setNotes] = React.useState( () => {
+        return JSON.parse(localStorage.getItem('Notes')) || []
+    }
     )
     const [currentNoteId, setCurrentNoteId] = React.useState(
         (notes[0] && notes[0].id) || ""
     )
-
-    
 
     
     function createNewNote() {
@@ -32,12 +31,22 @@ export default function App() {
     React.useEffect(() => {
         localStorage.setItem('Notes', JSON.stringify(notes))
     }, [notes])
+
+
+    function swap(notes, index){
+        const temp = notes[0]
+        notes[0] = notes[index]
+        notes[index] = temp
+    }
     
     function updateNote(text) {
-        setNotes(oldNotes => oldNotes.map(oldNote => {
-            return oldNote.id === currentNoteId
-                ? { ...oldNote, body: text }
-                : oldNote
+        setNotes(oldNotes => oldNotes.map((oldNote, index) => {
+            let newObject = oldNote;
+            if(oldNote.id === currentNoteId){
+                newObject = {...newObject, body: text}
+                swap(notes, index)
+            }
+            return newObject
         }))
     }
     
