@@ -49,6 +49,19 @@ export default function App() {
             return newObject
         }))
     }
+
+
+    function deleteNote(event, noteId){
+        console.log('Button clicked')
+        event.stopPropagation()
+        
+        
+        setNotes((prevNotes) => {
+            const newNotes = prevNotes.filter(obj => obj.id != noteId)
+            return newNotes
+        })
+        
+    }
     
     function findCurrentNote() {
         return notes.find(note => {
@@ -71,6 +84,7 @@ export default function App() {
                     currentNote={findCurrentNote()}
                     setCurrentNoteId={setCurrentNoteId}
                     newNote={createNewNote}
+                    deleteNote={deleteNote}
                 />
                 {
                     currentNoteId && 
