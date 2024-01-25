@@ -12,6 +12,7 @@ import './App.css'
 export default function App() {
     const [notes, setNotes] = React.useState([])
     const [currentNoteId, setCurrentNoteId] = React.useState("")
+    const [tempNoteText, setTempNoteText] = React.useState('')
     
     const currentNote = notes.find(note => note.id === currentNoteId
     ) || notes[0]
@@ -21,7 +22,7 @@ export default function App() {
     
     async function createNewNote() {
         const newNote = {
-            body: "# Type your markdown note's title here",
+            body: "# TEST",
             createdAt: Date.now(),
             updatedAt: Date.now()
         }
@@ -38,7 +39,24 @@ export default function App() {
 
 
     React.useEffect(() => {
-        console.log("UseEffect ran")
+        if(currentNote){
+            setTempNoteText(currentNote.body)
+        }
+    }, [currentNote])
+
+    React.useEffect(() => {
+        const timeOutId = setTimeout(() => {
+            if(tempNoteText !== currentNote.body){
+                updateNote(tempNoteText)
+            }
+        }, 500);
+
+        return () => clearTimeout(timeOutId)
+    }, [tempNoteText])
+    
+
+
+    React.useEffect(() => {
         const unsubscribe = onSnapshot(notesCollection, function(snapshot){
             console.log("Docs", snapshot.docs)
             // Sync up our local notes array with the snapshot data
@@ -73,8 +91,6 @@ export default function App() {
     }
     
     
-    
-    
     return (
         <main>
         {
@@ -94,8 +110,8 @@ export default function App() {
                 />
                     
                 <Editor 
-                    currentNote={currentNote} 
-                    updateNote={updateNote} 
+                    tempNoteText={tempNoteText} 
+                    setTempNoteText={setTempNoteText} 
                 />
             </Split>
             :
